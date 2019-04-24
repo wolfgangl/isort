@@ -375,9 +375,25 @@ class SortImports(object):
 
                     cont_line = self._wrap(self.config['indent'] + splitter.join(next_line).lstrip())
                     if self.config['use_parentheses']:
-                        output = "{0}{1}({2}{3}{4}{5})".format(
-                            line, splitter, self.line_separator, cont_line,
-                            "," if self.config['include_trailing_comma'] else "",
+                        # Deal with case where cont_line contains a comment and we want to add trailing
+                        # commas
+
+                        if self.config['include_trailing_comma']:
+                            if '#' in cont_line:
+                                cont_line_trailing_comment = re.sub(
+                                    r'^(.*\S+)(\s+)#(.*)$',
+                                    r'''\1,\2#\3''',
+                                    cont_line)
+                            else:
+                                cont_line_trailing_comment = cont_line + ","
+                        else:
+                            cont_line_trailing_comment = cont_line
+
+                        output = "{0}{1}({2}{3}{4})".format(
+                            line,
+                            splitter,
+                            self.line_separator,
+                            cont_line_trailing_comment,
                             self.line_separator if wrap_mode in (
                                 settings.WrapModes.VERTICAL_HANGING_INDENT,
                                 settings.WrapModes.VERTICAL_GRID_GROUPED,
