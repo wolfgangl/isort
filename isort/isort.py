@@ -409,6 +409,11 @@ class SortImports(object):
 
             comments_above = self.comments['above']['straight'].pop(module, None)
             if comments_above:
+                # Black compatibility setting
+                if (self.config['force_newline_before_comments']
+                    and len(section_output) > 0
+                    and section_output[-1] != ''):
+                    section_output.append('')
                 section_output.extend(comments_above)
             section_output.append(self._add_comments(self.comments['straight'].get(module), import_definition))
 

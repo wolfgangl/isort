@@ -163,7 +163,8 @@ default = {'force_to_top': [],
            'no_inline_sort': False,
            'ignore_comments': False,
            'safety_excludes': True,
-           'case_sensitive': False}
+           'case_sensitive': False,
+           'force_newline_before_comments': False}
 
 
 @lru_cache()
