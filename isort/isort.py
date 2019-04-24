@@ -425,6 +425,11 @@ class SortImports(object):
 
             comments_above = self.comments['above']['straight'].pop(module, None)
             if comments_above:
+                # Black compatibility setting
+                if (self.config['force_newline_before_comments']
+                    and len(section_output) > 0
+                    and section_output[-1] != ''):
+                    section_output.append('')
                 section_output.extend(comments_above)
             section_output.append(self._add_comments(self.comments['straight'].get(module), import_definition))
 
@@ -480,6 +485,10 @@ class SortImports(object):
                         from_comments = self.comments['straight'].get('{}.{}'.format(module, from_import))
                         above_comments = self.comments['above']['from'].pop(module, None)
                         if above_comments:
+                            if (self.config['force_newline_before_comments'] and
+                                len(section_output) > 0):
+                                section_output.append('')
+
                             section_output.extend(above_comments)
 
                         section_output.append(self._add_comments(from_comments,
@@ -548,8 +557,14 @@ class SortImports(object):
                 if import_statement:
                     above_comments = self.comments['above']['from'].pop(module, None)
                     if above_comments:
+                        if (self.config['force_newline_before_comments'] and
+                            len(section_output) > 0):
+                            section_output.append('')
+
                         section_output.extend(above_comments)
+
                     section_output.append(import_statement)
+
 
     def _multi_line_reformat(self, import_start, from_imports, comments):
         output_mode = settings.WrapModes._fields[self.config['multi_line_output']].lower()
